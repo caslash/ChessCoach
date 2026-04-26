@@ -1,0 +1,66 @@
+name: ChessCoach
+options:
+  bundleIdPrefix: com.chesscoach
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+packages:
+  ChessboardKit:
+    url: https://github.com/rohanrhu/ChessboardKit
+    from: "1.1.2"
+  LocalLLMClient:
+    url: https://github.com/tattn/LocalLLMClient
+    from: "0.5.0"
+
+configs:
+  Debug: debug
+  Release: release
+  AppStore: release
+  DirectDownload: release
+
+targets:
+  ChessCoach:
+    type: application
+    platform: macOS
+    sources:
+      - ChessCoach
+    resources:
+      - path: ChessCoach/Resources
+        optional: true
+    dependencies:
+      - package: ChessboardKit
+        product: ChessboardKit
+      - package: LocalLLMClient
+        product: LocalLLMClientLlama
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        MACOSX_DEPLOYMENT_TARGET: "26.0"
+        PRODUCT_BUNDLE_IDENTIFIER: com.chesscoach.ChessCoach
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+        GENERATE_INFOPLIST_FILE: YES
+      configs:
+        Debug:
+          CODE_SIGN_ENTITLEMENTS: ChessCoach/ChessCoach-Direct.entitlements
+        Release:
+          CODE_SIGN_ENTITLEMENTS: ChessCoach/ChessCoach-Direct.entitlements
+        AppStore:
+          CODE_SIGN_ENTITLEMENTS: ChessCoach/ChessCoach.entitlements
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: SANDBOXED
+        DirectDownload:
+          CODE_SIGN_ENTITLEMENTS: ChessCoach/ChessCoach-Direct.entitlements
+
+  ChessCoachTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - ChessCoachTests
+    dependencies:
+      - target: ChessCoach
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        MACOSX_DEPLOYMENT_TARGET: "26.0"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/ChessCoach.app/Contents/MacOS/ChessCoach"
