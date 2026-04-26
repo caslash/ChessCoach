@@ -19,9 +19,13 @@ final class GameViewModel {
     var pgn: String = ""
     var moveNumber: Int = 1
 
+    // Incremented by startNewGame() — BoardContainerView observes this to reset ChessboardModel
+    var gameID: UUID = UUID()
+
     // MARK: - Actions
 
     func startNewGame() {
+        gameID = UUID()
         isWhiteToMove = true
         isGameOver = false
         gameResultMessage = ""

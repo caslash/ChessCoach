@@ -17,11 +17,10 @@ struct BoardContainerView: View {
             }
             .aspectRatio(1, contentMode: .fit)
             .id(resetID)
-            .onChange(of: gameViewModel.moveNumber) { oldValue, newValue in
-                if newValue == 1 && oldValue > 1 {
-                    resetID += 1
-                    sanMoves = []
-                }
+            .onChange(of: gameViewModel.gameID) { _, _ in
+                chessboardModel = ChessboardModel(fen: INITIAL_FEN)
+                sanMoves = []
+                resetID += 1
             }
             .onChange(of: gameViewModel.isGameOver) { _, _ in
                 // Phase 2+: handle game over state (e.g. disable input)
@@ -31,13 +30,18 @@ struct BoardContainerView: View {
     // MARK: - Private
 
     private func handleLegalMove(move: Move, lan: String) {
+        // SAN computed from pre-move game state (ChessKit uses current position to determine check/mate suffix)
         let sanString = SanSerialization.default.san(for: move, in: chessboardModel.game)
         sanMoves.append(sanString)
+
+        // Apply move to ChessKit so position reflects post-move state
+        chessboardModel.game.make(move: move)
 
         let newFEN = FenSerialization.default.serialize(position: chessboardModel.game.position)
         let newPGN = buildPGN(from: sanMoves)
 
         withAnimation(.spring(duration: 0.3)) {
+            chessboardModel.setFen(newFEN, lan: lan)
             gameViewModel.handleMove(lan: lan, newFEN: newFEN, newPGN: newPGN)
         }
     }
