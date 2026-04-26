@@ -301,7 +301,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoach;
 				SDKROOT = macosx;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 6.3;
 			};
 			name = DirectDownload;
 		};
@@ -435,7 +435,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoachTests;
 				SDKROOT = macosx;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 6.3;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChessCoach.app/Contents/MacOS/ChessCoach";
 			};
 			name = AppStore;
@@ -456,7 +456,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoach;
 				SDKROOT = macosx;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 6.3;
 			};
 			name = Debug;
 		};
@@ -476,7 +476,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoach;
 				SDKROOT = macosx;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 6.3;
 			};
 			name = Release;
 		};
@@ -493,7 +493,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoachTests;
 				SDKROOT = macosx;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 6.3;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChessCoach.app/Contents/MacOS/ChessCoach";
 			};
 			name = Release;
@@ -566,7 +566,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoachTests;
 				SDKROOT = macosx;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 6.3;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChessCoach.app/Contents/MacOS/ChessCoach";
 			};
 			name = Debug;
@@ -643,7 +643,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoach;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SANDBOXED;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 6.3;
 			};
 			name = AppStore;
 		};
@@ -660,7 +660,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoachTests;
 				SDKROOT = macosx;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 6.3;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChessCoach.app/Contents/MacOS/ChessCoach";
 			};
 			name = DirectDownload;

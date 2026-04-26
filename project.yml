@@ -34,7 +34,7 @@ targets:
         product: LocalLLMClientLlama
     settings:
       base:
-        SWIFT_VERSION: "6.0"
+        SWIFT_VERSION: "6.3"
         MACOSX_DEPLOYMENT_TARGET: "26.0"
         PRODUCT_BUNDLE_IDENTIFIER: com.chesscoach.ChessCoach
         CODE_SIGN_STYLE: Automatic
@@ -60,7 +60,5 @@ targets:
       - target: ChessCoach
     settings:
       base:
-        SWIFT_VERSION: "6.0"
+        SWIFT_VERSION: "6.3"
         MACOSX_DEPLOYMENT_TARGET: "26.0"
-        BUNDLE_LOADER: "$(TEST_HOST)"
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/ChessCoach.app/Contents/MacOS/ChessCoach"
