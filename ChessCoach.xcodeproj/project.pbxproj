@@ -11,6 +11,18 @@
 		4791B3D67103FDC1E97917A5 /* ChessCoachApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7318AC6B628EC41D9212CB06 /* ChessCoachApp.swift */; };
 		52D6C103228BC322728622FB /* ChessboardKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9FA5F592C8FD6F4A9575D198 /* ChessboardKit */; };
 		78CDB4486285C61CD99D6951 /* LocalLLMClientLlama in Frameworks */ = {isa = PBXBuildFile; productRef = B5A9CA8E635593EDD3F77874 /* LocalLLMClientLlama */; };
+		A1B2C3D4E5F60001A1B2C3D4 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A1B2C3D4 /* GameViewModel.swift */; };
+		A1B2C3D4E5F60003A1B2C3D4 /* GameViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60004A1B2C3D4 /* GameViewModelTests.swift */; };
+		CC001AA00000000000000001 /* GameRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC001BB00000000000000001 /* GameRecord.swift */; };
+		CC001AA00000000000000002 /* PlayerProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC001BB00000000000000002 /* PlayerProfile.swift */; };
+		CC001AA00000000000000003 /* CoachMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC001BB00000000000000003 /* CoachMessage.swift */; };
+		CC001AA00000000000000004 /* GameRecordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC001BB00000000000000004 /* GameRecordTests.swift */; };
+		CC001AA00000000000000005 /* PlayerProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC001BB00000000000000005 /* PlayerProfileTests.swift */; };
+		CC001AA00000000000000006 /* CoachMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC001BB00000000000000006 /* CoachMessageTests.swift */; };
+		CC002AA00000000000000001 /* GameRecord.swift in TestSources */ = {isa = PBXBuildFile; fileRef = CC001BB00000000000000001 /* GameRecord.swift */; };
+		CC002AA00000000000000002 /* PlayerProfile.swift in TestSources */ = {isa = PBXBuildFile; fileRef = CC001BB00000000000000002 /* PlayerProfile.swift */; };
+		CC002AA00000000000000003 /* CoachMessage.swift in TestSources */ = {isa = PBXBuildFile; fileRef = CC001BB00000000000000003 /* CoachMessage.swift */; };
+		CC002AA00000000000000004 /* GameViewModel.swift in TestSources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60002A1B2C3D4 /* GameViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,10 +38,22 @@
 /* Begin PBXFileReference section */
 		0BE47C283306010AD3714926 /* ChessCoachTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChessCoachTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7318AC6B628EC41D9212CB06 /* ChessCoachApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessCoachApp.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60002A1B2C3D4 /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60004A1B2C3D4 /* GameViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModelTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60010A1B2C3D4 /* CoachMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachMessage.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60011A1B2C3D4 /* GameRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRecord.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60012A1B2C3D4 /* PlayerProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfile.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60013A1B2C3D4 /* SetupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupViewModel.swift; sourceTree = "<group>"; };
 		B8C29BA1613ECAC66CAEBEA6 /* ChessCoachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessCoachTests.swift; sourceTree = "<group>"; };
 		E028FD7831DF9F7DCA8CD8A2 /* ChessCoach.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChessCoach.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1EA40C0636A552C61CF56C5 /* ChessCoach.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChessCoach.entitlements; sourceTree = "<group>"; };
 		E9E443262DA235F2ADB003D9 /* ChessCoach-Direct.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ChessCoach-Direct.entitlements"; sourceTree = "<group>"; };
+		CC001BB00000000000000001 /* GameRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRecord.swift; sourceTree = "<group>"; };
+		CC001BB00000000000000002 /* PlayerProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfile.swift; sourceTree = "<group>"; };
+		CC001BB00000000000000003 /* CoachMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachMessage.swift; sourceTree = "<group>"; };
+		CC001BB00000000000000004 /* GameRecordTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRecordTests.swift; sourceTree = "<group>"; };
+		CC001BB00000000000000005 /* PlayerProfileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfileTests.swift; sourceTree = "<group>"; };
+		CC001BB00000000000000006 /* CoachMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachMessageTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +79,7 @@
 		107FAD3B9BCA0E6E795B9D8B /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60004A1B2C3D4 /* GameViewModelTests.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -81,6 +106,9 @@
 		770D8201EC0ED5937BD506C7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				CC001BB00000000000000004 /* GameRecordTests.swift */,
+				CC001BB00000000000000005 /* PlayerProfileTests.swift */,
+				CC001BB00000000000000006 /* CoachMessageTests.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -88,6 +116,9 @@
 		7C38B364949C78ED746C7DE5 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				CC001BB00000000000000001 /* GameRecord.swift */,
+				CC001BB00000000000000002 /* PlayerProfile.swift */,
+				CC001BB00000000000000003 /* CoachMessage.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -144,6 +175,7 @@
 		DB8500AB472D2F6A13B5D91C /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D4E5F60002A1B2C3D4 /* GameViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -263,6 +295,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D39B083CA933D33F7E6D690 /* ChessCoachTests.swift in Sources */,
+				A1B2C3D4E5F60003A1B2C3D4 /* GameViewModelTests.swift in Sources */,
+				CC001AA00000000000000004 /* GameRecordTests.swift in Sources */,
+				CC001AA00000000000000005 /* PlayerProfileTests.swift in Sources */,
+				CC001AA00000000000000006 /* CoachMessageTests.swift in Sources */,
+				CC002AA00000000000000001 /* GameRecord.swift in TestSources */,
+				CC002AA00000000000000002 /* PlayerProfile.swift in TestSources */,
+				CC002AA00000000000000003 /* CoachMessage.swift in TestSources */,
+				CC002AA00000000000000004 /* GameViewModel.swift in TestSources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,6 +311,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				4791B3D67103FDC1E97917A5 /* ChessCoachApp.swift in Sources */,
+				A1B2C3D4E5F60001A1B2C3D4 /* GameViewModel.swift in Sources */,
+				CC001AA00000000000000001 /* GameRecord.swift in Sources */,
+				CC001AA00000000000000002 /* PlayerProfile.swift in Sources */,
+				CC001AA00000000000000003 /* CoachMessage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,8 +469,8 @@
 		4753E59AC0BE3B367E0BC4AE /* AppStore */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -436,7 +480,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoachTests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.3;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChessCoach.app/Contents/MacOS/ChessCoach";
 			};
 			name = AppStore;
 		};
@@ -483,8 +526,8 @@
 		BB8DDA107F471F41C8F0B85F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -494,7 +537,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoachTests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.3;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChessCoach.app/Contents/MacOS/ChessCoach";
 			};
 			name = Release;
 		};
@@ -556,8 +598,8 @@
 		D0BA2BB1FD75C64A0752BA2B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -567,7 +609,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoachTests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.3;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChessCoach.app/Contents/MacOS/ChessCoach";
 			};
 			name = Debug;
 		};
@@ -650,8 +691,8 @@
 		FB25F3DE5444663DC92CB4A1 /* DirectDownload */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -661,7 +702,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.chesscoach.ChessCoachTests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.3;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ChessCoach.app/Contents/MacOS/ChessCoach";
 			};
 			name = DirectDownload;
 		};
