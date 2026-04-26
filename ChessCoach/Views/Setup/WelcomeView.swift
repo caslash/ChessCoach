@@ -10,7 +10,7 @@ struct WelcomeView: View {
             Image(systemName: "crown.fill")
                 .font(.system(size: 80))
                 .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(.accent)
+                .foregroundStyle(Color.accentColor)
                 .accessibilityLabel("ChessCoach crown icon")
 
             VStack(spacing: 12) {
