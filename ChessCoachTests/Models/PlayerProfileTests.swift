@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+@testable import ChessCoach
 
 @Suite("PlayerProfile")
 struct PlayerProfileTests {

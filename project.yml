@@ -62,3 +62,5 @@ targets:
       base:
         SWIFT_VERSION: "6.3"
         MACOSX_DEPLOYMENT_TARGET: "26.0"
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.chesscoach.ChessCoachTests
