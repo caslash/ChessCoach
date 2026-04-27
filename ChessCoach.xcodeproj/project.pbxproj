@@ -21,7 +21,6 @@
 		52D6C103228BC322728622FB /* ChessboardKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9FA5F592C8FD6F4A9575D198 /* ChessboardKit */; };
 		640D179701B981BD6EF434A3 /* CoachMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B14A2833609D8930E05E43 /* CoachMessageView.swift */; };
 		6D733D57B57794E718981EA1 /* SetupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D181D271F7644963FDF915FE /* SetupViewModel.swift */; };
-		78CDB4486285C61CD99D6951 /* LocalLLMClientLlama in Frameworks */ = {isa = PBXBuildFile; productRef = B5A9CA8E635593EDD3F77874 /* LocalLLMClientLlama */; };
 		793BD46D03D4713FDF90394C /* PlayerProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D84F680D2B7EF63E853CB7 /* PlayerProfileTests.swift */; };
 		7A10770A76B10874BFF0BB01 /* BoardContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECA21C7E7B5ECD5BDEF1DAF /* BoardContainerView.swift */; };
 		8581ED38CF70CD1C1FAB997F /* GameRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A22573445764837E4F0CF6 /* GameRecord.swift */; };
@@ -89,7 +88,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				52D6C103228BC322728622FB /* ChessboardKit in Frameworks */,
-				78CDB4486285C61CD99D6951 /* LocalLLMClientLlama in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,7 +288,6 @@
 			name = ChessCoach;
 			packageProductDependencies = (
 				9FA5F592C8FD6F4A9575D198 /* ChessboardKit */,
-				B5A9CA8E635593EDD3F77874 /* LocalLLMClientLlama */,
 			);
 			productName = ChessCoach;
 			productReference = E028FD7831DF9F7DCA8CD8A2 /* ChessCoach.app */;
@@ -866,11 +863,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6A7DF53A13955CA410976EE0 /* XCRemoteSwiftPackageReference "ChessboardKit" */;
 			productName = ChessboardKit;
-		};
-		B5A9CA8E635593EDD3F77874 /* LocalLLMClientLlama */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 87A7E87783B1119BC8CE7418 /* XCRemoteSwiftPackageReference "LocalLLMClient" */;
-			productName = LocalLLMClientLlama;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

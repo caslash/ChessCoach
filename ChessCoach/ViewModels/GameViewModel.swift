@@ -14,6 +14,7 @@ final class GameViewModel {
 
     // MARK: - Coach
     var coachMessages: [CoachMessage] = []
+    var isLLMLoaded: Bool = false
 
     // MARK: - Position tracking (set by BoardContainerView after each legal move)
     var currentFEN: String = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -44,6 +45,10 @@ final class GameViewModel {
         } catch {
             stockfishError = error.localizedDescription
         }
+    }
+
+    func launchLLM() async {
+        isLLMLoaded = LLMManager.shared.isAvailable
     }
 
     // MARK: - Actions
@@ -84,6 +89,11 @@ final class GameViewModel {
         let prevFEN = currentFEN
         let wasWhiteMove = isWhiteToMove
 
+        // Capture stable move context before the await — these may change mid-evaluation.
+        let capturedMoveNumber = moveNumber
+        let capturedPGN = newPGN
+        let capturedCurrentFEN = newFEN
+
         currentFEN = newFEN
         pgn = newPGN
         isWhiteToMove.toggle()
@@ -98,7 +108,11 @@ final class GameViewModel {
                 newFEN: newFEN,
                 lan: lan,
                 isWhiteMove: wasWhiteMove,
-                isPlayerMove: true
+                isPlayerMove: true,
+                capturedMoveNumber: capturedMoveNumber,
+                capturedMover: "You",
+                capturedPGN: capturedPGN,
+                capturedCurrentFEN: capturedCurrentFEN
             )
             // CPU move starts only after evaluation is complete (no pipe contention).
             if cpuTurnNow && !isGameOver {
@@ -114,6 +128,11 @@ final class GameViewModel {
         let prevFEN = currentFEN
         let wasWhiteMove = isWhiteToMove
 
+        // Capture stable move context before the await — these may change mid-evaluation.
+        let capturedMoveNumber = moveNumber
+        let capturedPGN = newPGN
+        let capturedCurrentFEN = newFEN
+
         pendingCPUMove = nil
         currentFEN = newFEN
         pgn = newPGN
@@ -126,7 +145,11 @@ final class GameViewModel {
                 newFEN: newFEN,
                 lan: lan,
                 isWhiteMove: wasWhiteMove,
-                isPlayerMove: false
+                isPlayerMove: false,
+                capturedMoveNumber: capturedMoveNumber,
+                capturedMover: "CPU",
+                capturedPGN: capturedPGN,
+                capturedCurrentFEN: capturedCurrentFEN
             )
         }
     }
@@ -153,7 +176,11 @@ final class GameViewModel {
         newFEN: String,
         lan: String,
         isWhiteMove: Bool,
-        isPlayerMove: Bool
+        isPlayerMove: Bool,
+        capturedMoveNumber: Int,
+        capturedMover: String,
+        capturedPGN: String,
+        capturedCurrentFEN: String
     ) async {
         do {
             let result = try await coachingEngine.evaluateMove(
@@ -163,10 +190,67 @@ final class GameViewModel {
                 isWhiteMove: isWhiteMove,
                 isPlayerMove: isPlayerMove
             )
-            // Phase 4: if result.shouldTriggerCoaching → call LLMManager, append streaming CoachMessage
-            _ = result
+
+            guard result.shouldTriggerCoaching else { return }
+
+            let prompt = coachingEngine.buildPrompt(
+                result: result,
+                lan: lan,
+                isPlayerMove: isPlayerMove,
+                mover: capturedMover,
+                moveNumber: capturedMoveNumber,
+                pgn: capturedPGN,
+                currentFEN: capturedCurrentFEN,
+                skillBracket: "intermediate"   // Phase 5 will wire PlayerProfile
+            )
+
+            // Append a streaming placeholder immediately so the UI reacts at once.
+            let newMessage = CoachMessage(
+                moveNumber: capturedMoveNumber,
+                mover: capturedMover,
+                classification: result.classification,
+                text: "",
+                isStreaming: true
+            )
+            coachMessages.append(newMessage)
+            let messageIndex = coachMessages.count - 1
+
+            // Stream tokens on a detached task — coaching never blocks the game loop.
+            Task.detached { [weak self] in
+                await self?.streamCoachTokens(messageIndex: messageIndex, prompt: prompt)
+            }
         } catch {
-            // Evaluation errors are non-fatal — game continues without coaching
+            // Evaluation errors are non-fatal — game continues without coaching.
+        }
+    }
+
+    private func streamCoachTokens(messageIndex: Int, prompt: CoachingEngine.CoachingPrompt) async {
+        guard messageIndex < coachMessages.count else { return }
+
+        guard LLMManager.shared.isAvailable else {
+            coachMessages[messageIndex].text = "[Coach unavailable — enable Apple Intelligence in System Settings]"
+            coachMessages[messageIndex].isStreaming = false
+            return
+        }
+
+        let stream = await LLMManager.shared.streamCoaching(
+            systemPrompt: prompt.systemPrompt,
+            userPrompt: prompt.userPrompt
+        )
+
+        do {
+            for try await token in stream {
+                guard messageIndex < coachMessages.count else { break }
+                coachMessages[messageIndex].text += token
+            }
+        } catch {
+            if messageIndex < coachMessages.count {
+                coachMessages[messageIndex].text = "[Coach unavailable]"
+            }
+        }
+
+        if messageIndex < coachMessages.count {
+            coachMessages[messageIndex].isStreaming = false
         }
     }
 

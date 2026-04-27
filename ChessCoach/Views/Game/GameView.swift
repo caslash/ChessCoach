@@ -25,6 +25,7 @@ struct GameView: View {
         .navigationTitle("ChessCoach")
         .task {
             await gameViewModel.launchStockfish()
+            await gameViewModel.launchLLM()
         }
         .alert("Engine Error", isPresented: .constant(gameViewModel.stockfishError != nil)) {
             Button("OK") { gameViewModel.stockfishError = nil }

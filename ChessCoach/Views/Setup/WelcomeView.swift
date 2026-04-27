@@ -1,7 +1,9 @@
 import SwiftUI
+import FoundationModels
 
 struct WelcomeView: View {
     @Binding var hasCompletedOnboarding: Bool
+    @State private var setupViewModel = SetupViewModel()
 
     var body: some View {
         VStack(spacing: 32) {
@@ -17,14 +19,18 @@ struct WelcomeView: View {
                 Text("ChessCoach")
                     .font(.largeTitle.weight(.bold))
 
-                Text("Play chess against a strong CPU opponent\nwhile a local AI coach explains your mistakes.")
+                Text("Play chess against a strong CPU opponent\nwhile a local AI coach explains your mistakes.\nEverything runs on your Mac — no internet required.")
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
+                    .frame(maxWidth: 360)
             }
 
-            // TODO: Phase 4 — replace with ModelPickerView flow
+            if case .unavailable(let reason) = setupViewModel.modelAvailability {
+                availabilityWarning(reason: reason)
+            }
+
             Button {
                 hasCompletedOnboarding = true
             } label: {
@@ -40,6 +46,25 @@ struct WelcomeView: View {
         }
         .padding(48)
         .frame(minWidth: 480, minHeight: 360)
+        .task {
+            // Skip onboarding entirely on repeat launches — model is always system-level
+            hasCompletedOnboarding = true
+        }
+    }
+
+    @ViewBuilder
+    private func availabilityWarning(reason: SystemLanguageModel.Availability.UnavailableReason) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "exclamationmark.triangle")
+                .foregroundStyle(.orange)
+            Text("Apple Intelligence is not available. Coaching will be disabled. Enable it in System Settings → Apple Intelligence & Siri.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.leading)
+        }
+        .padding(12)
+        .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
+        .frame(maxWidth: 360)
     }
 }
 

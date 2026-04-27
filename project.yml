@@ -40,8 +40,7 @@ targets:
     dependencies:
       - package: ChessboardKit
         product: ChessboardKit
-      - package: LocalLLMClient
-        product: LocalLLMClientLlama
+      # LocalLLMClient removed — using FoundationModels (Apple Intelligence) for inference
     settings:
       base:
         SWIFT_VERSION: "6.3"

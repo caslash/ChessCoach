@@ -39,6 +39,13 @@ final class CoachingEngine {
         let shouldTriggerCoaching: Bool
     }
 
+    // MARK: - Coaching prompt types
+
+    struct CoachingPrompt {
+        let systemPrompt: String
+        let userPrompt: String
+    }
+
     // MARK: - State
 
     var verbosity: Verbosity = .normal
@@ -111,7 +118,7 @@ final class CoachingEngine {
         return result
     }
 
-    // MARK: - Centipawn formatting (for LLM prompt in Phase 4)
+    // MARK: - Centipawn formatting (for LLM prompt)
 
     func formatScore(_ cp: Int) -> String {
         if cp >= 10_000  { return "checkmate for white" }
@@ -119,5 +126,67 @@ final class CoachingEngine {
         let pawns = Double(abs(cp)) / 100.0
         let side = cp > 0 ? "white" : "black"
         return String(format: "%.1f (%@ advantage)", pawns, side)
+    }
+
+    // MARK: - Prompt building
+
+    /// Constructs the system and user prompts to send to the LLM for a coaching moment.
+    func buildPrompt(
+        result: EvaluationResult,
+        lan: String,
+        isPlayerMove: Bool,
+        mover: String,
+        moveNumber: Int,
+        pgn: String,
+        currentFEN: String,
+        skillBracket: String
+    ) -> CoachingPrompt {
+        let systemPrompt = """
+            You are a friendly, knowledgeable chess coach sitting beside the player as they play.
+            Your job is to help them understand what just happened and why — not to quiz them.
+
+            When the player makes an error:
+            - Gently and clearly name what went wrong (e.g. "that move leaves your king exposed on
+              the back rank" or "moving that pawn let the knight into a strong outpost on d5")
+            - Briefly explain the chess concept it violated — king safety, piece activity, pawn
+              structure, tactical patterns, etc.
+            - If helpful, note what to watch for going forward — but never say what specific move
+              they should have played
+
+            When the CPU plays an instructive move:
+            - Point out what made it strong or effective
+            - Name the concept or pattern (fork, pin, outpost, tempo gain, etc.)
+            - Help the player recognise this pattern so they can use or counter it in future
+
+            Rules:
+            - Never ask rhetorical questions. The player cannot respond, so every message must be
+              self-contained and genuinely informative on its own.
+            - Never reveal the specific best move Stockfish recommended.
+            - Never say "you should have played [move]" or reference specific square notation
+              unless the player is at STRONG level.
+            - Be warm and encouraging in tone, never critical or discouraging.
+            - Keep responses concise: 2–4 sentences for simple errors, up to 6 for complex concepts.
+            - Adapt language to player level: \(skillBracket.uppercased())
+              - BEGINNER: plain language, name pieces not squares, explain all terms used
+              - INTERMEDIATE: standard chess vocabulary, light use of notation
+              - STRONG: full chess terminology and notation freely used
+            """
+
+        let moveBy = isPlayerMove ? "the player" : "the CPU opponent"
+
+        let userPrompt = """
+            Game so far (PGN): \(pgn.isEmpty ? "(no moves yet)" : pgn)
+            Current position (FEN): \(currentFEN)
+            Move made by: \(moveBy)
+            Move description: \(lan) played by \(mover)
+            Position evaluation before move: \(formatScore(result.scoreBefore))
+            Position evaluation after move: \(formatScore(result.scoreAfter))
+            Classification: \(result.classification)
+            Stockfish best line (context only — do NOT reveal to the player): not available in Phase 4
+
+            Coach response:
+            """
+
+        return CoachingPrompt(systemPrompt: systemPrompt, userPrompt: userPrompt)
     }
 }
