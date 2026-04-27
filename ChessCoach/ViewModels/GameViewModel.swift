@@ -1,5 +1,8 @@
 import Foundation
 import Observation
+import OSLog
+
+private let vmLog = Logger(subsystem: "com.chesscoach", category: "GameViewModel")
 
 @MainActor
 @Observable
@@ -48,7 +51,12 @@ final class GameViewModel {
     }
 
     func launchLLM() async {
-        isLLMLoaded = LLMManager.shared.isAvailable
+        let avail = LLMManager.shared.availability
+        vmLog.info("Apple Intelligence availability: \(String(describing: avail))")
+        isLLMLoaded = avail == .available
+        if !isLLMLoaded {
+            vmLog.warning("Coaching disabled: \(LLMManager.shared.unavailabilityMessage ?? "unknown reason")")
+        }
     }
 
     // MARK: - Actions
@@ -227,11 +235,24 @@ final class GameViewModel {
     private func streamCoachTokens(messageIndex: Int, prompt: CoachingEngine.CoachingPrompt) async {
         guard messageIndex < coachMessages.count else { return }
 
+        // If the model is not yet ready, wait up to 30 s then retry once.
+        if !LLMManager.shared.isAvailable {
+            if case .unavailable(.modelNotReady) = LLMManager.shared.availability {
+                coachMessages[messageIndex].text = "⏳ Model loading…"
+                try? await Task.sleep(for: .seconds(10))
+            }
+        }
+
+        guard messageIndex < coachMessages.count else { return }
+
         guard LLMManager.shared.isAvailable else {
-            coachMessages[messageIndex].text = "[Coach unavailable — enable Apple Intelligence in System Settings]"
+            let reason = LLMManager.shared.unavailabilityMessage ?? "Apple Intelligence is not available."
+            coachMessages[messageIndex].text = reason
             coachMessages[messageIndex].isStreaming = false
             return
         }
+
+        coachMessages[messageIndex].text = ""
 
         let stream = await LLMManager.shared.streamCoaching(
             systemPrompt: prompt.systemPrompt,
@@ -245,7 +266,7 @@ final class GameViewModel {
             }
         } catch {
             if messageIndex < coachMessages.count {
-                coachMessages[messageIndex].text = "[Coach unavailable]"
+                coachMessages[messageIndex].text = error.localizedDescription
             }
         }
 
