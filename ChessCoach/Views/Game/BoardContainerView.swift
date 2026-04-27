@@ -5,7 +5,10 @@ import ChessKit
 struct BoardContainerView: View {
     @Bindable var gameViewModel: GameViewModel
 
-    @State private var chessboardModel = ChessboardModel(fen: INITIAL_FEN)
+    // ChessboardKit's INITIAL_FEN constant is missing the g-file knights; use the correct FEN.
+    private static let startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
+    @State private var chessboardModel = ChessboardModel(fen: startFEN)
     @State private var sanMoves: [String] = []
     @State private var resetID: Int = 0
 
@@ -18,7 +21,7 @@ struct BoardContainerView: View {
             .aspectRatio(1, contentMode: .fit)
             .id(resetID)
             .onChange(of: gameViewModel.gameID) { _, _ in
-                chessboardModel = ChessboardModel(fen: INITIAL_FEN)
+                chessboardModel = ChessboardModel(fen: Self.startFEN)
                 sanMoves = []
                 resetID += 1
             }
