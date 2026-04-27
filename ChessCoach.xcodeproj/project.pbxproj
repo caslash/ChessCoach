@@ -36,6 +36,7 @@
 		BEC77908FF4BEC5F0246053C /* LLMManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96076A4E70788AF9AFDBDBD0 /* LLMManager.swift */; };
 		F5C21A8EEB0A71031C0B81DC /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919C3BFD81C6801F03D78A0E /* WelcomeView.swift */; };
 		F740432C2E15F38855330FC0 /* CoachMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515874C62EEFDF3B8CCA51C1 /* CoachMessageTests.swift */; };
+		C46AA28F07F016DACCBC1722 /* stockfish in Resources */ = {isa = PBXBuildFile; fileRef = 47B4D6B1D1D2DED386DADE32 /* stockfish */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		0BE47C283306010AD3714926 /* ChessCoachTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChessCoachTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E87DA00CBC6615786935055 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3A3A69C57AEAC65FBA1DCF5C /* CoachPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachPanelView.swift; sourceTree = "<group>"; };
+		47B4D6B1D1D2DED386DADE32 /* stockfish */ = {isa = PBXFileReference; path = stockfish; sourceTree = "<group>"; };
 		4D50BF4D9A01368FD2718B91 /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
 		4ECD619AD8571FD13D482E06 /* GameControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameControlsView.swift; sourceTree = "<group>"; };
 		515874C62EEFDF3B8CCA51C1 /* CoachMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachMessageTests.swift; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 		F78055F8C269DDB8A7AF17B0 /* Engines */ = {
 			isa = PBXGroup;
 			children = (
+				47B4D6B1D1D2DED386DADE32 /* stockfish */,
 			);
 			path = Engines;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B9E5EF9F12183D683BDF2504 /* Build configuration list for PBXNativeTarget "ChessCoach" */;
 			buildPhases = (
+				257F67454E579D11E6AFA8FA /* Resources */,
 				D20E7B28A246B7B302A73CD0 /* Sources */,
 				E17F0EA6986CACEFD6C4A82E /* Frameworks */,
 			);
@@ -375,6 +379,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		257F67454E579D11E6AFA8FA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C46AA28F07F016DACCBC1722 /* stockfish in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		5995D8D58DC2873D10B4E7EF /* PBXTargetDependency */ = {

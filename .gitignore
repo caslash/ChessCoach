@@ -132,3 +132,7 @@ iOSInjectionProject/
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 # End of https://www.toptal.com/developers/gitignore/api/xcode,swift,macos
+
+# Stockfish binary — too large for GitHub (108 MB). Install via Homebrew or bundle manually.
+# cp /opt/homebrew/bin/stockfish ChessCoach/Resources/Engines/stockfish
+ChessCoach/Resources/Engines/stockfish
