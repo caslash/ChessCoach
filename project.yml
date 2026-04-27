@@ -24,9 +24,19 @@ targets:
     platform: macOS
     sources:
       - ChessCoach
-    resources:
-      - path: ChessCoach/Resources
-        optional: true
+    preBuildScripts:
+      - name: Copy Stockfish Engine
+        showEnvVarsInLog: false
+        script: |
+          SRC="$SRCROOT/ChessCoach/Resources/Engines/stockfish"
+          DST="$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/stockfish"
+          if [ -f "$SRC" ]; then
+            cp -f "$SRC" "$DST"
+            chmod +x "$DST"
+          else
+            echo "warning: Stockfish binary not found at $SRC"
+            echo "warning: Run: cp /opt/homebrew/bin/stockfish ChessCoach/Resources/Engines/stockfish"
+          fi
     dependencies:
       - package: ChessboardKit
         product: ChessboardKit
@@ -64,3 +74,5 @@ targets:
         MACOSX_DEPLOYMENT_TARGET: "26.0"
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.chesscoach.ChessCoachTests
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "-"

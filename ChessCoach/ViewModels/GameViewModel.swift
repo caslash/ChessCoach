@@ -26,20 +26,20 @@ final class GameViewModel {
     // Pending CPU move LAN — BoardContainerView observes this to apply the move visually
     var pendingCPUMove: String? = nil
 
-    // True while Stockfish is computing a move
+    // True while Stockfish is computing a CPU move
     var isCPUThinking: Bool = false
 
     // MARK: - Private
 
-    private var stockfish: StockfishManager { StockfishManager.shared }
     private var stockfishLaunched = false
+    private var coachingEngine: CoachingEngine { CoachingEngine.shared }
 
     // MARK: - Lifecycle
 
     func launchStockfish() async {
         guard !stockfishLaunched else { return }
         do {
-            try await stockfish.launch()
+            try await StockfishManager.shared.launch()
             stockfishLaunched = true
         } catch {
             stockfishError = error.localizedDescription
@@ -63,8 +63,7 @@ final class GameViewModel {
 
         Task {
             do {
-                try await stockfish.newGame()
-                // If player is black, CPU (white) moves first
+                try await StockfishManager.shared.newGame()
                 if playerColour == "black" {
                     await triggerCPUMove()
                 }
@@ -78,30 +77,70 @@ final class GameViewModel {
         playerColour = playerColour == "white" ? "black" : "white"
     }
 
+    // MARK: - Human move
+
     // Called by BoardContainerView after each legal human move.
     func handleMove(lan: String, newFEN: String, newPGN: String) {
+        let prevFEN = currentFEN
+        let wasWhiteMove = isWhiteToMove
+
         currentFEN = newFEN
         pgn = newPGN
         isWhiteToMove.toggle()
         if isWhiteToMove { moveNumber += 1 }
 
-        // Phase 3 will pass to CoachingEngine for eval delta here.
+        let cpuTurnNow = isCPUTurn()
 
-        // Trigger CPU response if it's now the CPU's turn
-        let cpuIsWhite = playerColour == "black"
-        let cpuTurnNow = cpuIsWhite ? isWhiteToMove : !isWhiteToMove
-        if cpuTurnNow && !isGameOver {
-            Task { await triggerCPUMove() }
+        Task {
+            // Evaluate player's move (sequential — same Stockfish actor as CPU move request).
+            await evaluateAndRecord(
+                prevFEN: prevFEN,
+                newFEN: newFEN,
+                lan: lan,
+                isWhiteMove: wasWhiteMove,
+                isPlayerMove: true
+            )
+            // CPU move starts only after evaluation is complete (no pipe contention).
+            if cpuTurnNow && !isGameOver {
+                await triggerCPUMove()
+            }
         }
     }
 
     // MARK: - CPU move
 
+    // Called by BoardContainerView once it has applied the CPU move visually.
+    func cpuMoveApplied(lan: String, newFEN: String, newPGN: String) {
+        let prevFEN = currentFEN
+        let wasWhiteMove = isWhiteToMove
+
+        pendingCPUMove = nil
+        currentFEN = newFEN
+        pgn = newPGN
+        isWhiteToMove.toggle()
+        if isWhiteToMove { moveNumber += 1 }
+
+        Task {
+            await evaluateAndRecord(
+                prevFEN: prevFEN,
+                newFEN: newFEN,
+                lan: lan,
+                isWhiteMove: wasWhiteMove,
+                isPlayerMove: false
+            )
+        }
+    }
+
+    // MARK: - Private
+
     private func triggerCPUMove() async {
         guard !isGameOver else { return }
         isCPUThinking = true
         do {
-            let lan = try await stockfish.requestMove(fen: currentFEN, difficulty: currentDifficulty)
+            let lan = try await StockfishManager.shared.requestMove(
+                fen: currentFEN,
+                difficulty: currentDifficulty
+            )
             pendingCPUMove = lan
         } catch {
             stockfishError = error.localizedDescription
@@ -109,13 +148,30 @@ final class GameViewModel {
         isCPUThinking = false
     }
 
-    // Called by BoardContainerView once it has applied the CPU move visually.
-    func cpuMoveApplied(lan: String, newFEN: String, newPGN: String) {
-        pendingCPUMove = nil
-        currentFEN = newFEN
-        pgn = newPGN
-        isWhiteToMove.toggle()
-        if isWhiteToMove { moveNumber += 1 }
-        // Phase 3: evaluate CPU move for instructional coaching here.
+    private func evaluateAndRecord(
+        prevFEN: String,
+        newFEN: String,
+        lan: String,
+        isWhiteMove: Bool,
+        isPlayerMove: Bool
+    ) async {
+        do {
+            let result = try await coachingEngine.evaluateMove(
+                prevFEN: prevFEN,
+                newFEN: newFEN,
+                lan: lan,
+                isWhiteMove: isWhiteMove,
+                isPlayerMove: isPlayerMove
+            )
+            // Phase 4: if result.shouldTriggerCoaching → call LLMManager, append streaming CoachMessage
+            _ = result
+        } catch {
+            // Evaluation errors are non-fatal — game continues without coaching
+        }
+    }
+
+    private func isCPUTurn() -> Bool {
+        let cpuIsWhite = playerColour == "black"
+        return cpuIsWhite ? isWhiteToMove : !isWhiteToMove
     }
 }

@@ -36,7 +36,6 @@
 		BEC77908FF4BEC5F0246053C /* LLMManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96076A4E70788AF9AFDBDBD0 /* LLMManager.swift */; };
 		F5C21A8EEB0A71031C0B81DC /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919C3BFD81C6801F03D78A0E /* WelcomeView.swift */; };
 		F740432C2E15F38855330FC0 /* CoachMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515874C62EEFDF3B8CCA51C1 /* CoachMessageTests.swift */; };
-		C46AA28F07F016DACCBC1722 /* stockfish in Resources */ = {isa = PBXBuildFile; fileRef = 47B4D6B1D1D2DED386DADE32 /* stockfish */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -280,7 +279,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B9E5EF9F12183D683BDF2504 /* Build configuration list for PBXNativeTarget "ChessCoach" */;
 			buildPhases = (
-				257F67454E579D11E6AFA8FA /* Resources */,
+				F6A611E550E2CB08E5029BAC /* Copy Stockfish Engine */,
 				D20E7B28A246B7B302A73CD0 /* Sources */,
 				E17F0EA6986CACEFD6C4A82E /* Frameworks */,
 			);
@@ -306,6 +305,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					AED8AE61759AD2E1AB317C45 = {
+						ProvisioningStyle = Automatic;
+					};
 					BA14DCA1A643C0DE9CFC6D23 = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
@@ -335,6 +337,27 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F6A611E550E2CB08E5029BAC /* Copy Stockfish Engine */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Stockfish Engine";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "SRC=\"$SRCROOT/ChessCoach/Resources/Engines/stockfish\"\nDST=\"$BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/stockfish\"\nif [ -f \"$SRC\" ]; then\n  cp -f \"$SRC\" \"$DST\"\n  chmod +x \"$DST\"\nelse\n  echo \"warning: Stockfish binary not found at $SRC\"\n  echo \"warning: Run: cp /opt/homebrew/bin/stockfish ChessCoach/Resources/Engines/stockfish\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		30B04E21FE9D8C436203033C /* Sources */ = {
@@ -379,17 +402,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXResourcesBuildPhase section */
-		257F67454E579D11E6AFA8FA /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C46AA28F07F016DACCBC1722 /* stockfish in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		5995D8D58DC2873D10B4E7EF /* PBXTargetDependency */ = {
@@ -541,6 +553,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -600,6 +614,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -674,6 +690,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -769,6 +787,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
