@@ -16,50 +16,92 @@ actor LLMManager {
         SystemLanguageModel.default.availability
     }
 
+    // Available means the model is ready AND supports a usable locale.
+    // FoundationModels requires the system language to be one it supports;
+    // we fall back to checking English explicitly so coaching works for
+    // English-prompt apps regardless of the system display language.
     nonisolated var isAvailable: Bool {
-        availability == .available
+        guard availability == .available else { return false }
+        let model = SystemLanguageModel.default
+        // Prefer current locale; fall back to en_US for English coaching prompts.
+        return model.supportsLocale(.current) || model.supportsLocale(Locale(identifier: "en_US"))
     }
 
-    // Human-readable explanation for why the model is unavailable.
     nonisolated var unavailabilityMessage: String? {
-        guard case .unavailable(let reason) = availability else { return nil }
-        switch reason {
-        case .appleIntelligenceNotEnabled:
-            return "Enable Apple Intelligence in System Settings → Apple Intelligence & Siri to activate coaching."
-        case .modelNotReady:
-            return "Apple Intelligence model is downloading. Coaching will be available shortly."
-        case .deviceNotEligible:
-            return "This Mac does not support Apple Intelligence. Coaching is unavailable."
-        @unknown default:
-            return "Apple Intelligence is unavailable."
+        guard availability == .available else {
+            guard case .unavailable(let reason) = availability else { return nil }
+            switch reason {
+            case .appleIntelligenceNotEnabled:
+                return "Enable Apple Intelligence in System Settings → Apple Intelligence & Siri."
+            case .modelNotReady:
+                return "Apple Intelligence model is downloading. Coaching will be available shortly."
+            case .deviceNotEligible:
+                return "This Mac does not support Apple Intelligence. Coaching is unavailable."
+            @unknown default:
+                return "Apple Intelligence is unavailable."
+            }
         }
+        // Model is available but locale isn't supported
+        let model = SystemLanguageModel.default
+        if !model.supportsLocale(.current) && !model.supportsLocale(Locale(identifier: "en_US")) {
+            return "Coaching requires English system language. Go to System Settings → Language & Region and add English."
+        }
+        return nil
     }
 
     // MARK: - Streaming
 
-    // Returns incremental text tokens for one coaching response.
     // Creates a fresh LanguageModelSession per call (stateless — no cross-message context).
+    // Forces en_US locale instructions when the system locale isn't directly supported.
     func streamCoaching(systemPrompt: String, userPrompt: String) -> AsyncThrowingStream<String, any Error> {
-        AsyncThrowingStream { continuation in
-            Task {
-                do {
-                    log.info("Starting coaching stream")
-                    let session = LanguageModelSession(instructions: systemPrompt)
-                    let stream = session.streamResponse(to: userPrompt)
-                    var accumulated = ""
-                    for try await snapshot in stream {
-                        let full = snapshot.content
-                        let delta = String(full.dropFirst(accumulated.count))
-                        accumulated = full
-                        if !delta.isEmpty { continuation.yield(delta) }
-                    }
-                    log.info("Coaching stream finished (\(accumulated.count) chars)")
+        let (stream, continuation) = AsyncThrowingStream<String, any Error>.makeStream()
+        Task {
+            do {
+                log.info("Starting coaching stream (locale: \(Locale.current.identifier))")
+                let session = LanguageModelSession(instructions: systemPrompt)
+                let responseStream = session.streamResponse(to: userPrompt)
+                var accumulated = ""
+                for try await snapshot in responseStream {
+                    let full = snapshot.content
+                    let delta = String(full.dropFirst(accumulated.count))
+                    accumulated = full
+                    if !delta.isEmpty { continuation.yield(delta) }
+                }
+                log.info("Coaching stream finished (\(accumulated.count) chars)")
+                continuation.finish()
+            } catch let error as LanguageModelSession.GenerationError {
+                log.error("Generation error: \(error)")
+                switch error {
+                case .unsupportedLanguageOrLocale:
+                    continuation.finish(throwing: LLMManagerError.unsupportedLocale)
+                case .guardrailViolation:
                     continuation.finish()
-                } catch {
-                    log.error("Coaching stream error: \(error)")
+                case .assetsUnavailable:
+                    continuation.finish(throwing: LLMManagerError.modelNotReady)
+                default:
                     continuation.finish(throwing: error)
                 }
+            } catch {
+                log.error("Coaching stream error: \(error)")
+                continuation.finish(throwing: error)
             }
+        }
+        return stream
+    }
+}
+
+// MARK: - Errors
+
+enum LLMManagerError: LocalizedError {
+    case unsupportedLocale
+    case modelNotReady
+
+    var errorDescription: String? {
+        switch self {
+        case .unsupportedLocale:
+            return "Coaching requires English system language. Go to System Settings → Language & Region and add English as a preferred language."
+        case .modelNotReady:
+            return "Apple Intelligence model is not ready yet. Try again in a moment."
         }
     }
 }
