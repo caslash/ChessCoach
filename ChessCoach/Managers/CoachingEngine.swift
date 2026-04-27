@@ -174,17 +174,25 @@ final class CoachingEngine {
 
         let moveBy = isPlayerMove ? "the player" : "the CPU opponent"
 
-        let userPrompt = """
-            Game so far (PGN): \(pgn.isEmpty ? "(no moves yet)" : pgn)
-            Current position (FEN): \(currentFEN)
-            Move made by: \(moveBy)
-            Move description: \(lan) played by \(mover)
-            Position evaluation before move: \(formatScore(result.scoreBefore))
-            Position evaluation after move: \(formatScore(result.scoreAfter))
-            Classification: \(result.classification)
-            Stockfish best line (context only — do NOT reveal to the player): not available in Phase 4
+        // Avoid FEN strings and LAN notation in the prompt — FoundationModels'
+        // language detector treats them as non-English and throws unsupportedLanguageOrLocale.
+        // Describe the position in natural language only.
+        let recentMoves: String = {
+            guard !pgn.isEmpty else { return "The game just started." }
+            // Trim to the last 80 chars of PGN so the prompt stays short
+            let trimmed = pgn.count > 80 ? "..." + pgn.suffix(80) : pgn
+            return "Recent moves: \(trimmed)"
+        }()
 
-            Coach response:
+        let userPrompt = """
+            Chess coaching context — move \(moveNumber) of the game.
+            This move was made by \(moveBy).
+            Move quality classification: \(result.classification)
+            Position evaluation before the move: \(formatScore(result.scoreBefore))
+            Position evaluation after the move: \(formatScore(result.scoreAfter))
+            \(recentMoves)
+
+            Please give a concise coaching response about this move.
             """
 
         return CoachingPrompt(systemPrompt: systemPrompt, userPrompt: userPrompt)

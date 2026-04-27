@@ -56,37 +56,75 @@ actor LLMManager {
     func streamCoaching(systemPrompt: String, userPrompt: String) -> AsyncThrowingStream<String, any Error> {
         let (stream, continuation) = AsyncThrowingStream<String, any Error>.makeStream()
         Task {
-            do {
-                log.info("Starting coaching stream (locale: \(Locale.current.identifier))")
-                let session = LanguageModelSession(instructions: systemPrompt)
-                let responseStream = session.streamResponse(to: userPrompt)
-                var accumulated = ""
-                for try await snapshot in responseStream {
-                    let full = snapshot.content
-                    let delta = String(full.dropFirst(accumulated.count))
-                    accumulated = full
-                    if !delta.isEmpty { continuation.yield(delta) }
-                }
-                log.info("Coaching stream finished (\(accumulated.count) chars)")
-                continuation.finish()
-            } catch let error as LanguageModelSession.GenerationError {
-                log.error("Generation error: \(error)")
-                switch error {
-                case .unsupportedLanguageOrLocale:
-                    continuation.finish(throwing: LLMManagerError.unsupportedLocale)
-                case .guardrailViolation:
-                    continuation.finish()
-                case .assetsUnavailable:
-                    continuation.finish(throwing: LLMManagerError.modelNotReady)
-                default:
-                    continuation.finish(throwing: error)
-                }
-            } catch {
-                log.error("Coaching stream error: \(error)")
-                continuation.finish(throwing: error)
-            }
+            await runCoachingStream(
+                systemPrompt: systemPrompt,
+                userPrompt: userPrompt,
+                continuation: continuation,
+                attemptsRemaining: 2
+            )
         }
         return stream
+    }
+
+    private func runCoachingStream(
+        systemPrompt: String,
+        userPrompt: String,
+        continuation: AsyncThrowingStream<String, any Error>.Continuation,
+        attemptsRemaining: Int
+    ) async {
+        log.info("Starting coaching stream (locale: \(Locale.current.identifier), attempts left: \(attemptsRemaining))")
+        do {
+            let session = LanguageModelSession(instructions: systemPrompt)
+            let responseStream = session.streamResponse(to: userPrompt)
+            var accumulated = ""
+            for try await snapshot in responseStream {
+                let full = snapshot.content
+                let delta = String(full.dropFirst(accumulated.count))
+                accumulated = full
+                if !delta.isEmpty { continuation.yield(delta) }
+            }
+            log.info("Coaching stream finished (\(accumulated.count) chars)")
+            continuation.finish()
+        } catch let error as LanguageModelSession.GenerationError {
+            log.error("Generation error: \(error)")
+            switch error {
+            case .unsupportedLanguageOrLocale:
+                // Can be intermittent in macOS 26 — retry once before surfacing the error
+                if attemptsRemaining > 1 {
+                    log.warning("unsupportedLanguageOrLocale — retrying in 1 s")
+                    try? await Task.sleep(for: .seconds(1))
+                    await runCoachingStream(
+                        systemPrompt: systemPrompt,
+                        userPrompt: userPrompt,
+                        continuation: continuation,
+                        attemptsRemaining: attemptsRemaining - 1
+                    )
+                } else {
+                    continuation.finish(throwing: LLMManagerError.unsupportedLocale)
+                }
+            case .guardrailViolation:
+                continuation.finish()
+            case .assetsUnavailable:
+                continuation.finish(throwing: LLMManagerError.modelNotReady)
+            case .rateLimited, .concurrentRequests:
+                if attemptsRemaining > 1 {
+                    try? await Task.sleep(for: .seconds(2))
+                    await runCoachingStream(
+                        systemPrompt: systemPrompt,
+                        userPrompt: userPrompt,
+                        continuation: continuation,
+                        attemptsRemaining: attemptsRemaining - 1
+                    )
+                } else {
+                    continuation.finish(throwing: error)
+                }
+            default:
+                continuation.finish(throwing: error)
+            }
+        } catch {
+            log.error("Coaching stream error: \(error)")
+            continuation.finish(throwing: error)
+        }
     }
 }
 
